@@ -8,7 +8,7 @@
   <script src="https://cdn.jsdelivr.net/gh/jeromeetienne/AR.js/aframe/build/aframe-ar.js"></script>
 </head>
 <body style="margin: 0; overflow: hidden;">
-  <a-scene embedded arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false;">
+  <a-scene embedded arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false;" vr-mode-ui="enabled: false">
     
     <!-- Marcador AR para exibir objetos -->
     <a-marker preset="hiro">
@@ -21,5 +21,20 @@
     <!-- Câmera -->
     <a-entity camera></a-entity>
   </a-scene>
+
+  <script>
+    // Forçando a câmera a usar uma resolução mais alta, o que pode minimizar o zoom
+    navigator.mediaDevices.getUserMedia({ 
+      video: { 
+        facingMode: 'environment',
+        width: { ideal: 1920 }, // Define a largura ideal da câmera
+        height: { ideal: 1080 } // Define a altura ideal da câmera
+      } 
+    }).then(function(stream) {
+      document.querySelector('video').srcObject = stream;
+    }).catch(function(error) {
+      console.log('Erro ao acessar a câmera:', error);
+    });
+  </script>
 </body>
 </html>
