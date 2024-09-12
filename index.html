@@ -6,34 +6,45 @@
   <title>AR Sólidos Geométricos</title>
   <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/jeromeetienne/AR.js/aframe/build/aframe-ar.js"></script>
+  <style>
+    #zoom-control {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 300px;
+    }
+  </style>
 </head>
 <body style="margin: 0; overflow: hidden;">
-  <a-scene embedded arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false;" vr-mode-ui="enabled: false">
+  <!-- Cena AR -->
+  <a-scene embedded arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false;">
     
     <!-- Marcador AR para exibir objetos -->
-    <a-marker preset="hiro">
+    <a-marker preset="hiro" id="marker">
       <!-- Sólidos Geométricos -->
-      <a-box position="0 0.5 0" rotation="0 45 0" width="1" height="1" depth="1" color="#4CC3D9"></a-box>
-      <a-sphere position="1.5 0.5 0" radius="0.5" color="#EF2D5E"></a-sphere>
-      <a-cone position="3 0.5 0" radius-bottom="0.5" height="1" color="#FFC65D"></a-cone>
+      <a-box position="0 0.5 0" rotation="0 45 0" width="1" height="1" depth="1" color="#4CC3D9" scale="1 1 1" id="box"></a-box>
+      <a-sphere position="1.5 0.5 0" radius="0.5" color="#EF2D5E" scale="1 1 1" id="sphere"></a-sphere>
+      <a-cone position="3 0.5 0" radius-bottom="0.5" height="1" color="#FFC65D" scale="1 1 1" id="cone"></a-cone>
     </a-marker>
-    
+
     <!-- Câmera -->
     <a-entity camera></a-entity>
   </a-scene>
 
+  <!-- Controle de Zoom -->
+  <input type="range" id="zoom-control" min="0.5" max="3" step="0.1" value="1" />
+
   <script>
-    // Forçando a câmera a usar uma resolução mais alta, o que pode minimizar o zoom
-    navigator.mediaDevices.getUserMedia({ 
-      video: { 
-        facingMode: 'environment',
-        width: { ideal: 1920 }, // Define a largura ideal da câmera
-        height: { ideal: 1080 } // Define a altura ideal da câmera
-      } 
-    }).then(function(stream) {
-      document.querySelector('video').srcObject = stream;
-    }).catch(function(error) {
-      console.log('Erro ao acessar a câmera:', error);
+    // Função para ajustar o zoom (escalar objetos)
+    const zoomControl = document.getElementById('zoom-control');
+    const objects = ['box', 'sphere', 'cone'].map(id => document.getElementById(id));
+
+    zoomControl.addEventListener('input', function() {
+      const scaleValue = this.value;
+      objects.forEach(object => {
+        object.setAttribute('scale', `${scaleValue} ${scaleValue} ${scaleValue}`);
+      });
     });
   </script>
 </body>
