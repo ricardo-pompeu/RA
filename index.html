@@ -1,51 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AR Sólidos Geométricos</title>
-  <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/gh/jeromeetienne/AR.js/aframe/build/aframe-ar.js"></script>
-  <style>
-    #zoom-control {
-      position: absolute;
-      bottom: 10px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 300px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Geometric Shapes in VR</title>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background-color: #f0f0f0;
+        }
+        .menu {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            z-index: 10;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .menu button {
+            padding: 10px;
+            margin: 5px;
+            border: none;
+            background-color: #333;
+            color: white;
+            font-size: 14px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
 </head>
-<body style="margin: 0; overflow: hidden;">
-  <!-- Cena AR -->
-  <a-scene embedded arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false;">
-    
-    <!-- Marcador AR para exibir objetos -->
-    <a-marker preset="hiro" id="marker">
-      <!-- Sólidos Geométricos -->
-      <a-box position="0 0.5 0" rotation="0 45 0" width="1" height="1" depth="1" color="#4CC3D9" scale="1 1 1" id="box"></a-box>
-      <a-sphere position="1.5 0.5 0" radius="0.5" color="#EF2D5E" scale="1 1 1" id="sphere"></a-sphere>
-      <a-cone position="3 0.5 0" radius-bottom="0.5" height="1" color="#FFC65D" scale="1 1 1" id="cone"></a-cone>
-    </a-marker>
+<body>
+    <div class="menu">
+        <button onclick="createShape('box')">Create Box</button>
+        <button onclick="createShape('sphere')">Create Sphere</button>
+        <button onclick="createShape('cylinder')">Create Cylinder</button>
+        <button onclick="createShape('tetrahedron')">Create Tetrahedron</button>
+    </div>
 
-    <!-- Câmera -->
-    <a-entity camera></a-entity>
-  </a-scene>
+    <a-scene embedded>
+        <a-entity position="0 1.6 0">
+            <a-camera wasd-controls look-controls></a-camera>
+        </a-entity>
+    </a-scene>
 
-  <!-- Controle de Zoom -->
-  <input type="range" id="zoom-control" min="0.5" max="3" step="0.1" value="1" />
+    <script>
+        function createShape(shape) {
+            const scene = document.querySelector('a-scene');
+            let entity;
 
-  <script>
-    // Função para ajustar o zoom (escalar objetos)
-    const zoomControl = document.getElementById('zoom-control');
-    const objects = ['box', 'sphere', 'cone'].map(id => document.getElementById(id));
+            switch(shape) {
+                case 'box':
+                    entity = document.createElement('a-box');
+                    entity.setAttribute('depth', '1');
+                    entity.setAttribute('height', '1');
+                    entity.setAttribute('width', '1');
+                    break;
+                case 'sphere':
+                    entity = document.createElement('a-sphere');
+                    entity.setAttribute('radius', '1');
+                    break;
+                case 'cylinder':
+                    entity = document.createElement('a-cylinder');
+                    entity.setAttribute('height', '1.5');
+                    entity.setAttribute('radius', '0.5');
+                    break;
+                case 'tetrahedron':
+                    entity = document.createElement('a-tetrahedron');
+                    entity.setAttribute('radius', '1');
+                    break;
+            }
 
-    zoomControl.addEventListener('input', function() {
-      const scaleValue = this.value;
-      objects.forEach(object => {
-        object.setAttribute('scale', `${scaleValue} ${scaleValue} ${scaleValue}`);
-      });
-    });
-  </script>
+            entity.setAttribute('position', `${Math.random() * 4 - 2} 1.6 -4`);
+            entity.setAttribute('color', `#${Math.floor(Math.random()*16777215).toString(16)}`);
+            scene.appendChild(entity);
+        }
+    </script>
 </body>
 </html>
